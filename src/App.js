@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import Subject from './components/Subject';
 import TOC from './components/TOC';
-import Content from './components/Content';
+import Control from './components/Control';
+import ReadContent from './components/ReadContent';
+import CreateContent from './components/CreateContent';
 
 class App extends Component {
   constructor(props) {
     super(props);
+    this.max_content_id = 3;
     this.state = {
       mode:'read',
       selected_content_id:2,
@@ -21,10 +24,11 @@ class App extends Component {
   }
 
   render() {
-    var _title, _desc = null;
+    var _title, _desc, _article = null;
     if (this.state.mode === 'welcome') {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     }
     else if (this.state.mode === 'read') {
       var i = 0;
@@ -37,6 +41,30 @@ class App extends Component {
         }
         i = i + 1;
       }
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    }
+    else if (this.state.mode === 'create') {
+      _article = <CreateContent onSubmit={function(_title, _desc){
+        this.max_content_id = this.max_content_id + 1;
+        // an approach to extend an array (by modifying the original array)
+        // this.state.contents.push(
+        //   {id:this.max_content_id, title:_title, desc:_desc}
+        // );
+        // an approach to extend an array (without modifying the original array)
+        // this approach is better with the performance later
+        var _contents = this.state.contents.concat(
+          {id:this.max_content_id, title:_title, desc:_desc}
+        );
+        this.setState({
+          contents:_contents
+        });
+      }.bind(this)}></CreateContent>
+    }
+    else if (this.state.mode === 'update') {
+
+    }
+    else if (this.state.mode === 'delete') {
+
     }
     return (
       <div className="App">
@@ -49,6 +77,7 @@ class App extends Component {
             });
           }.bind(this)}>
         </Subject>
+        
         <TOC 
           onChangePage={function(id){
             this.setState({
@@ -56,10 +85,14 @@ class App extends Component {
               selected_content_id:Number(id)
             });
           }.bind(this)}
-          data={this.state.contents}
-          >
+          data={this.state.contents}>
         </TOC>
-        <Content title={_title} desc={_desc}></Content>
+        <Control onChangePage={function(_mode){
+          this.setState({
+            mode:_mode
+          });
+        }.bind(this)}></Control>
+        {_article}
       </div>
     );
   }
