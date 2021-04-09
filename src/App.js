@@ -50,12 +50,14 @@ class App extends Component {
         // this.state.contents.push(
         //   {id:this.max_content_id, title:_title, desc:_desc}
         // );
-        // an approach to extend an array (without modifying the original array)
-        // this approach is better with the performance later
+        // another approach to extend an array (without modifying the original array)
+        // this approach is better for improving the performance...
+        // via e.g., shouldComponentUpdate(newProps, newState) { if (newProps.data === this.props.data) return false}
         var _contents = this.state.contents.concat(
           {id:this.max_content_id, title:_title, desc:_desc}
         );
         this.setState({
+          //contents:this.state.contents
           contents:_contents
         });
       }.bind(this)}></CreateContent>
