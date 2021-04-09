@@ -12,7 +12,7 @@ class App extends Component {
     super(props);
     this.max_content_id = 3;
     this.state = {
-      mode: 'read',
+      mode: 'welcome',
       selected_content_id: 2,
       subject: { title: 'WEB', sub: 'World Wide Web!' },
       welcome: { title: 'Welcome', desc: 'Hello, React!!!' },
@@ -86,9 +86,7 @@ class App extends Component {
         });
       }.bind(this)}></UpdateContent>
     }
-    else if (this.state.mode === 'delete') {
 
-    }
     return _article;
   }
 
@@ -116,9 +114,29 @@ class App extends Component {
         </TOC>
 
         <Control onChangePage={function (_mode) {
-          this.setState({
-            mode: _mode
-          });
+          if (_mode === "delete") {
+            if (window.confirm('really delete this?')) {
+              var _contents = Array.from(this.state.contents);
+              var i = 0;
+              while (i < _contents.length) {
+                if (_contents[i].id === this.state.selected_content_id) {
+                  _contents.splice(i, 1);
+                  break;
+                }
+                i = i + 1;
+              }
+              this.setState({
+                contents: _contents,
+                mode: 'welcome'
+              });
+              alert('deleted!');
+            }
+          }
+          else {
+            this.setState({
+              mode: _mode
+            });
+          }
         }.bind(this)}></Control>
 
         {this.getContent()}
